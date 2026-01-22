@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Shrinkage Control</title>
+    <style>
+        /* ========== COMPACT SHRINKAGE MODAL STYLES ========== */
+        .shrinkage-container {
+            font-family: Arial, sans-serif;
+            max-width: 350px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+            margin: 20px auto;
+        }
+        
+        /* Modal Header */
+        .shrinkage-header {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+        }
+        
+        .shrinkage-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        
+        .shrinkage-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+        
+        /* Preview Area */
+        .shrinkage-preview {
+            padding: 20px;
+            background: #f5f7fa;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+        }
+        
+        .preview-box {
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(45deg, #e3f2fd 25%, transparent 25%),
+                        linear-gradient(-45deg, #e3f2fd 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #e3f2fd 75%),
+                        linear-gradient(-45deg, transparent 75%, #e3f2fd 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            margin: 0 auto 15px auto;
+            position: relative;
+            border: 2px solid #1976d2;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .original-outline {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(0,0,0,0.2);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-label {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .preview-label strong {
+            color: #333;
+        }
+        
+        /* Control Groups */
+        .shrinkage-controls {
+            padding: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .control-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .control-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1976d2;
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        /* Slider Styling - FIXED for better sign indication */
+        .slider-container {
+            position: relative;
+            margin-bottom: 5px;
+        }
+        
+        .slider-track {
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(to right, #4CAF50, #FF9800 50%, #F44336);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slider-fill {
+            position: absolute;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.2s ease;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 20px;
+            position: absolute;
+            top: -7px;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        .slider-ticks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+        
+        .slider-tick {
+            font-size: 10px;
+            color: #666;
+        }
+        
+        /* Plus/Minus Controls */
+        .pm-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pm-button {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .pm-button:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+        
+        .pm-button:active {
+            transform: scale(0.95);
+        }
+        
+        .pm-input {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .pm-input:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reset-btn {
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #ddd;
+        }
+        
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .apply-btn {
+            background: linear-gradient(135deg, #1976d2, #0d47a1);
+            color: white;
+        }
+        
+        .apply-btn:hover {
+            background: linear-gradient(135deg, #1565c0, #0d3b7a);
+            transform: translateY(-1px);
+        }
+        
+        .apply-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Shrinkage Indicator */
+        .shrinkage-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .shrinkage-indicator.negative {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .shrinkage-indicator.expansion {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        /* Active Piece Styling */
+        .shrinkage-active {
+            box-shadow: 0 0 0 3px #ff9800;
+            border-color: #ff9800 !important;
+        }
+        
+        /* Close Button */
+        .shrinkage-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .shrinkage-close:hover {
+            background: rgba(0,0,0,0.1);
+        }
+        
+        /* Demo Styles */
+        .demo-container {
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        
+        .demo-title {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .pattern-piece-demo {
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(45deg, #e3f2fd 25%, transparent 25%),
+                        linear-gradient(-45deg, #e3f2fd 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #e3f2fd 75%),
+                        linear-gradient(-45deg, transparent 75%, #e3f2fd 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            margin: 20px auto;
+            border: 2px solid #1976d2;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-controls {
+            margin-top: 20px;
+        }
+        
+        .demo-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #1976d2, #0d47a1);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+        
+        /* Info Tooltip */
+        .info-tooltip {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #666;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            text-align: center;
+            line-height: 16px;
+            margin-left: 5px;
+            cursor: help;
+            position: relative;
+        }
+        
+        .info-tooltip:hover::after {
+            content: "Positive = Shrink | Negative = Expand";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <!-- DEMO SECTION (Remove in production) -->
+    <div class="demo-container">
+        <h1 class="demo-title">Pattern Shrinkage Demo</h1>
+        
+        <!-- Pattern Piece -->
+        <div class="pattern-piece-demo" id="demoPatternPiece">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                       text-align: center; color: #333;">
+                <div style="font-size: 14px; font-weight: bold;">Pattern Piece</div>
+                <div style="font-size: 12px; color: #666;" id="currentSize">200 × 150</div>
+            </div>
+        </div>
+        
+        <!-- Open Shrinkage Modal Button -->
+        <div class="demo-controls">
+            <button class="demo-button" onclick="openShrinkageModal()">
+                Open Shrinkage Controls
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== COMPACT SHRINKAGE MODAL ========== -->
+    <div class="shrinkage-container" id="shrinkageModal" style="display: none;" role="dialog" aria-labelledby="shrinkageTitle">
+        <!-- Close Button -->
+        <button class="shrinkage-close" onclick="closeShrinkageModal()" aria-label="Close">×</button>
+        
+        <!-- Header -->
+        <div class="shrinkage-header">
+            <h2 class="shrinkage-title" id="shrinkageTitle">PATTERN SHRINKAGE</h2>
+            <p class="shrinkage-subtitle">Positive = Shrink | Negative = Expand</p>
+        </div>
+        
+        <!-- Preview Area -->
+        <div class="shrinkage-preview">
+            <div class="preview-box" id="previewBox">
+                <!-- Original outline (static) -->
+                <div class="original-outline" id="originalOutline" 
+                     style="width: 200px; height: 150px;"></div>
+                <!-- Scaled preview (dynamic) -->
+                <div id="scaledPreview" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                                              background: rgba(25, 118, 210, 0.7); border: 2px solid #1976d2;
+                                              border-radius: 4px; transition: all 0.3s ease;"></div>
+            </div>
+            <div class="preview-label">
+                Preview: <span style="text-decoration: line-through; color: #666;">Original</span> 
+                vs <strong>After Shrinkage</strong> 
+                <span id="scaleIndicator" class="shrinkage-indicator">0%</span>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="shrinkage-controls">
+            <!-- Overall Shrinkage -->
+            <div class="control-group">
+                <div class="control-header">
+                    <span class="control-label">OVERALL SHRINKAGE 
+                        <span class="info-tooltip" title="Positive = Shrink, Negative = Expand">i</span>
+                    </span>
+                    <span class="control-value" id="overallValue">0%</span>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-track">
+                        <div class="slider-fill" id="sliderFill" style="width: 50%;"></div>
+                    </div>
+                    <input type="range" min="-30" max="30" step="1" value="0" 
+                           class="shrinkage-slider" id="overallSlider" 
+                           aria-label="Overall shrinkage percentage">
+                    <div class="slider-ticks">
+                        <span class="slider-tick">-30%</span>
+                        <span class="slider-tick">0%</span>
+                        <span class="slider-tick">+30%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Width Shrinkage -->
+            <div class="control-group">
+                <div class="control-header">
+                    <span class="control-label">WIDTH SHRINKAGE %</span>
+                    <span class="control-value" id="widthValue">0</span>
+                </div>
+                <div class="pm-controls">
+                    <button class="pm-button" onclick="adjustControl('width', -1)" aria-label="Decrease width shrinkage">-</button>
+                    <input type="number" min="-30" max="30" step="1" value="0" 
+                           class="pm-input" id="widthInput" aria-label="Width shrinkage percentage">
+                    <button class="pm-button" onclick="adjustControl('width', 1)" aria-label="Increase width shrinkage">+</button>
+                </div>
+            </div>
+            
+            <!-- Height Shrinkage -->
+            <div class="control-group">
+                <div class="control-header">
+                    <span class="control-label">HEIGHT SHRINKAGE %</span>
+                    <span class="control-value" id="heightValue">0</span>
+                </div>
+                <div class="pm-controls">
+                    <button class="pm-button" onclick="adjustControl('height', -1)" aria-label="Decrease height shrinkage">-</button>
+                    <input type="number" min="-30" max="30" step="1" value="0" 
+                           class="pm-input" id="heightInput" aria-label="Height shrinkage percentage">
+                    <button class="pm-button" onclick="adjustControl('height', 1)" aria-label="Increase height shrinkage">+</button>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn reset-btn" onclick="resetAllControls()">RESET ALL</button>
+                <button class="action-btn apply-btn" onclick="applyShrinkage()">APPLY CHANGES</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== SHRINKAGE MODAL FUNCTIONALITY ==========
+        
+        // State
+        let shrinkageState = {
+            overall: 0,
+            width: 0,
+            height: 0
+        };
+        
+        // Store original dimensions
+        const originalDimensions = {
+            width: 200,
+            height: 150
+        };
+        
+        // Current applied transform
+        let currentTransform = { scaleX: 1, scaleY: 1 };
+        
+        // DOM Elements
+        const elements = {
+            modal: document.getElementById('shrinkageModal'),
+            overallSlider: document.getElementById('overallSlider'),
+            overallValue: document.getElementById('overallValue'),
+            widthInput: document.getElementById('widthInput'),
+            widthValue: document.getElementById('widthValue'),
+            heightInput: document.getElementById('heightInput'),
+            heightValue: document.getElementById('heightValue'),
+            sliderFill: document.getElementById('sliderFill'),
+            scaledPreview: document.getElementById('scaledPreview'),
+            originalOutline: document.getElementById('originalOutline'),
+            scaleIndicator: document.getElementById('scaleIndicator'),
+            demoPattern: document.getElementById('demoPatternPiece'),
+            currentSize: document.getElementById('currentSize')
+        };
+        
+        // CORRECTED: Calculate Scale Factor
+        // Positive percentage = shrinkage (scale < 1)
+        // Negative percentage = expansion (scale > 1)
+        function calculateScaleFactor(percent) {
+            return 1 - (percent / 100);
+        }
+        
+        // CORRECTED: Calculate actual size after shrinkage
+        function calculateActualSize(original, percent) {
+            return original * (1 - percent/100);
+        }
+        
+        // Open Modal
+        function openShrinkageModal() {
+            elements.modal.style.display = 'block';
+            // Reset to current applied values when reopening
+            updateInputsFromCurrentTransform();
+            updatePreview();
+        }
+        
+        // Close Modal
+        function closeShrinkageModal() {
+            elements.modal.style.display = 'none';
+        }
+        
+        // Adjust Control
+        function adjustControl(type, amount) {
+            const input = elements[type + 'Input'];
+            const valueSpan = elements[type + 'Value'];
+            
+            let current = parseFloat(input.value) || 0;
+            let newValue = current + amount;
+            
+            // Clamp between -30 and 30
+            newValue = Math.max(-30, Math.min(30, newValue));
+            
+            // Update UI
+            input.value = newValue;
+            valueSpan.textContent = newValue;
+            shrinkageState[type] = newValue;
+            
+            // Update preview
+            updatePreview();
+        }
+        
+        // Update Inputs from Current Transform
+        function updateInputsFromCurrentTransform() {
+            // Convert current scale back to percentages
+            const widthPercent = (1 - currentTransform.scaleX) * 100;
+            const heightPercent = (1 - currentTransform.scaleY) * 100;
+            
+            // For simplicity, set overall to 0 and distribute to width/height
+            elements.overallSlider.value = 0;
+            elements.widthInput.value = Math.round(widthPercent);
+            elements.heightInput.value = Math.round(heightPercent);
+            
+            elements.overallValue.textContent = '0%';
+            elements.widthValue.textContent = Math.round(widthPercent);
+            elements.heightValue.textContent = Math.round(heightPercent);
+        }
+        
+        // Update Preview
+        function updatePreview() {
+            // Get current values
+            const overall = parseFloat(elements.overallSlider.value) || 0;
+            const width = parseFloat(elements.widthInput.value) || 0;
+            const height = parseFloat(elements.heightInput.value) || 0;
+            
+            // Calculate scale factors CORRECTLY
+            const overallFactor = calculateScaleFactor(overall);
+            const widthFactor = calculateScaleFactor(width);
+            const heightFactor = calculateScaleFactor(height);
+            
+            // Combined scale (multiplicative)
+            const scaleX = overallFactor * widthFactor;
+            const scaleY = overallFactor * heightFactor;
+            
+            // Update preview visualization
+            const baseWidth = originalDimensions.width;
+            const baseHeight = originalDimensions.height;
+            
+            elements.scaledPreview.style.width = (baseWidth * scaleX) + 'px';
+            elements.scaledPreview.style.height = (baseHeight * scaleY) + 'px';
+            
+            // Calculate percentage change (negative means shrinkage)
+            const widthChange = (scaleX - 1) * 100;
+            const heightChange = (scaleY - 1) * 100;
+            const avgChange = (widthChange + heightChange) / 2;
+            
+            // Update scale indicator with correct labeling
+            let changeText = '';
+            let indicatorClass = '';
+            
+            if (avgChange < 0) {
+                changeText = `Shrink: ${Math.abs(avgChange).toFixed(1)}%`;
+                indicatorClass = 'shrinkage-indicator negative';
+            } else if (avgChange > 0) {
+                changeText = `Expand: ${avgChange.toFixed(1)}%`;
+                indicatorClass = 'shrinkage-indicator expansion';
+            } else {
+                changeText = '0%';
+                indicatorClass = 'shrinkage-indicator';
+            }
+            
+            elements.scaleIndicator.textContent = changeText;
+            elements.scaleIndicator.className = indicatorClass;
+            
+            // Update slider fill position and color
+            updateSliderFill(overall);
+            
+            // Update current size display
+            const newWidth = Math.round(baseWidth * scaleX);
+            const newHeight = Math.round(baseHeight * scaleY);
+            elements.currentSize.textContent = `${newWidth} × ${newHeight}`;
+            
+            // Highlight demo pattern if changes are pending
+            if (overall !== 0 || width !== 0 || height !== 0) {
+                elements.demoPattern.classList.add('shrinkage-active');
+            } else {
+                elements.demoPattern.classList.remove('shrinkage-active');
+            }
+        }
+        
+        // Update Slider Fill
+        function updateSliderFill(value) {
+            // Convert value from -30 to 30 to 0-100%
+            const percentage = ((parseFloat(value) + 30) / 60) * 100;
+            elements.sliderFill.style.width = percentage + '%';
+            
+            // Update color based on value
+            if (value < 0) {
+                elements.sliderFill.style.background = '#F44336'; // Red for expansion
+            } else if (value > 0) {
+                elements.sliderFill.style.background = '#4CAF50'; // Green for shrinkage
+            } else {
+                elements.sliderFill.style.background = '#FF9800'; // Orange for neutral
+            }
+        }
+        
+        // Apply Shrinkage - FIXED to prevent transform stacking
+        function applyShrinkage() {
+            const overall = parseFloat(elements.overallSlider.value) || 0;
+            const width = parseFloat(elements.widthInput.value) || 0;
+            const height = parseFloat(elements.heightInput.value) || 0;
+            
+            // Calculate final scale
+            const overallFactor = calculateScaleFactor(overall);
+            const widthFactor = calculateScaleFactor(width);
+            const heightFactor = calculateScaleFactor(height);
+            
+            const scaleX = overallFactor * widthFactor;
+            const scaleY = overallFactor * heightFactor;
+            
+            // Store current transform
+            currentTransform = { scaleX, scaleY };
+            
+            // Apply to demo pattern - RESET transform first to avoid stacking
+            elements.demoPattern.style.transform = 'none';
+            // Use requestAnimationFrame for clean application
+            requestAnimationFrame(() => {
+                elements.demoPattern.style.transform = `scale(${scaleX}, ${scaleY})`;
+                elements.demoPattern.style.transformOrigin = 'center';
+            });
+            
+            // Calculate new dimensions
+            const newWidth = Math.round(originalDimensions.width * scaleX);
+            const newHeight = Math.round(originalDimensions.height * scaleY);
+            
+            // Update display
+            elements.currentSize.textContent = `${newWidth} × ${newHeight}`;
+            elements.currentSize.style.color = '#2e7d32';
+            elements.currentSize.style.fontWeight = 'bold';
+            
+            // Store data
+            elements.demoPattern.dataset.shrinkageApplied = true;
+            elements.demoPattern.dataset.scaleX = scaleX.toFixed(3);
+            elements.demoPattern.dataset.scaleY = scaleY.toFixed(3);
+            elements.demoPattern.dataset.originalWidth = originalDimensions.width;
+            elements.demoPattern.dataset.originalHeight = originalDimensions.height;
+            
+            // Show success message with correct terminology
+            const widthChange = (scaleX - 1) * 100;
+            const heightChange = (scaleY - 1) * 100;
+            
+            let message = `Shrinkage applied!\n\n`;
+            message += `Original: ${originalDimensions.width} × ${originalDimensions.height}\n`;
+            message += `New Size: ${newWidth} × ${newHeight}\n\n`;
+            
+            if (widthChange < 0) {
+                message += `Width: ${Math.abs(widthChange).toFixed(1)}% shrinkage\n`;
+            } else if (widthChange > 0) {
+                message += `Width: ${widthChange.toFixed(1)}% expansion\n`;
+            } else {
+                message += `Width: No change\n`;
+            }
+            
+            if (heightChange < 0) {
+                message += `Height: ${Math.abs(heightChange).toFixed(1)}% shrinkage\n`;
+            } else if (heightChange > 0) {
+                message += `Height: ${heightChange.toFixed(1)}% expansion\n`;
+            } else {
+                message += `Height: No change\n`;
+            }
+            
+            alert(message);
+            
+            // Close modal
+            closeShrinkageModal();
+        }
+        
+        // Reset All Controls
+        function resetAllControls() {
+            // Reset sliders and inputs
+            elements.overallSlider.value = 0;
+            elements.widthInput.value = 0;
+            elements.heightInput.value = 0;
+            
+            // Reset values display
+            elements.overallValue.textContent = '0%';
+            elements.widthValue.textContent = '0';
+            elements.heightValue.textContent = '0';
+            
+            // Reset state
+            shrinkageState.overall = 0;
+            shrinkageState.width = 0;
+            shrinkageState.height = 0;
+            
+            // Reset preview
+            updatePreview();
+            
+            // Reset demo pattern
+            elements.demoPattern.style.transform = 'none';
+            elements.demoPattern.classList.remove('shrinkage-active');
+            elements.currentSize.textContent = '200 × 150';
+            elements.currentSize.style.color = '';
+            elements.currentStyle.fontWeight = '';
+            
+            // Reset transform tracking
+            currentTransform = { scaleX: 1, scaleY: 1 };
+            
+            delete elements.demoPattern.dataset.shrinkageApplied;
+        }
+        
+        // Event Listeners
+        function setupEventListeners() {
+            // Overall slider
+            elements.overallSlider.addEventListener('input', function() {
+                elements.overallValue.textContent = this.value + '%';
+                shrinkageState.overall = parseFloat(this.value) || 0;
+                updatePreview();
+            });
+            
+            // Input fields with validation
+            ['width', 'height'].forEach(type => {
+                const input = elements[type + 'Input'];
+                const valueSpan = elements[type + 'Value'];
+                
+                input.addEventListener('input', function() {
+                    let value = parseFloat(this.value) || 0;
+                    
+                    // Validate range
+                    if (value < -30 || value > 30) {
+                        this.style.borderColor = '#F44336';
+                    } else {
+                        this.style.borderColor = '';
+                    }
+                    
+                    value = Math.max(-30, Math.min(30, value));
+                    this.value = value;
+                    valueSpan.textContent = value;
+                    shrinkageState[type] = value;
+                    updatePreview();
+                });
+                
+                input.addEventListener('blur', function() {
+                    let value = parseFloat(this.value) || 0;
+                    value = Math.max(-30, Math.min(30, value));
+                    this.value = value;
+                    valueSpan.textContent = value;
+                    shrinkageState[type] = value;
+                    updatePreview();
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (elements.modal.style.display === 'block') {
+                    if (e.key === 'Escape') {
+                        closeShrinkageModal();
+                        e.preventDefault();
+                    }
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        applyShrinkage();
+                        e.preventDefault();
+                    }
+                    if (e.key === 'r' && e.ctrlKey) {
+                        resetAllControls();
+                        e.preventDefault();
+                    }
+                }
+            });
+            
+            // Prevent form submission on Enter in inputs
+            document.querySelectorAll('.pm-input').forEach(input => {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur();
+                    }
+                });
+            });
+        }
+        
+        // Initialize
+        function initShrinkageModule() {
+            // Set initial values
+            elements.overallValue.textContent = elements.overallSlider.value + '%';
+            elements.widthValue.textContent = elements.widthInput.value;
+            elements.heightValue.textContent = elements.heightInput.value;
+            
+            // Set original outline to match base dimensions
+            elements.originalOutline.style.width = originalDimensions.width + 'px';
+            elements.originalOutline.style.height = originalDimensions.height + 'px';
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initial preview update
+            updatePreview();
+            
+            console.log('Shrinkage module initialized with corrected calculations');
+        }
+        
+        // Start when page loads
+        window.addEventListener('DOMContentLoaded', initShrinkageModule);
+        
+        // Make functions available globally
+        window.openShrinkageModal = openShrinkageModal;
+        window.closeShrinkageModal = closeShrinkageModal;
+        window.applyShrinkage = applyShrinkage;
+        window.resetAllControls = resetAllControls;
+    </script>
+</body>
+</html>
