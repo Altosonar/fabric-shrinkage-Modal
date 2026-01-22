@@ -300,6 +300,12 @@
             background: #e9ecef;
         }
         
+        .pm-button.active {
+            background: #e9ecef;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+        }
+        
         .pm-input {
             flex: 1;
             padding: 10px;
@@ -366,15 +372,6 @@
         .apply-btn:active {
             transform: translateY(0);
             box-shadow: 0 2px 6px rgba(25, 118, 210, 0.3);
-        }
-
-        /* Print Button Style */
-        .print-btn {
-            background: #607d8b;
-            color: white;
-        }
-        .print-btn:hover {
-            background: #546e7a;
         }
         
         /* Shrinkage Indicator */
@@ -690,12 +687,24 @@
                     <span class="control-value" id="widthValue">0</span>
                 </div>
                 <div class="pm-controls">
-                    <button class="pm-button" onclick="adjustControl('width', -1)" 
-                            aria-label="Decrease width shrinkage" id="widthDecreaseBtn">-</button>
+                    <button class="pm-button" 
+                            onmousedown="startContinuousAdjust('width', -1, this)" 
+                            onmouseup="stopContinuousAdjust('width')"
+                            onmouseleave="stopContinuousAdjust('width')"
+                            ontouchstart="startContinuousAdjust('width', -1, this)" 
+                            ontouchend="stopContinuousAdjust('width')"
+                            aria-label="Decrease width shrinkage" 
+                            id="widthDecreaseBtn">-</button>
                     <input type="number" min="-30" max="30" step="1" value="0" 
                            class="pm-input" id="widthInput" aria-label="Width shrinkage percentage">
-                    <button class="pm-button" onclick="adjustControl('width', 1)" 
-                            aria-label="Increase width shrinkage" id="widthIncreaseBtn">+</button>
+                    <button class="pm-button" 
+                            onmousedown="startContinuousAdjust('width', 1, this)" 
+                            onmouseup="stopContinuousAdjust('width')"
+                            onmouseleave="stopContinuousAdjust('width')"
+                            ontouchstart="startContinuousAdjust('width', 1, this)" 
+                            ontouchend="stopContinuousAdjust('width')"
+                            aria-label="Increase width shrinkage" 
+                            id="widthIncreaseBtn">+</button>
                 </div>
             </div>
             
@@ -705,18 +714,29 @@
                     <span class="control-value" id="heightValue">0</span>
                 </div>
                 <div class="pm-controls">
-                    <button class="pm-button" onclick="adjustControl('height', -1)" 
-                            aria-label="Decrease height shrinkage" id="heightDecreaseBtn">-</button>
+                    <button class="pm-button" 
+                            onmousedown="startContinuousAdjust('height', -1, this)" 
+                            onmouseup="stopContinuousAdjust('height')"
+                            onmouseleave="stopContinuousAdjust('height')"
+                            ontouchstart="startContinuousAdjust('height', -1, this)" 
+                            ontouchend="stopContinuousAdjust('height')"
+                            aria-label="Decrease height shrinkage" 
+                            id="heightDecreaseBtn">-</button>
                     <input type="number" min="-30" max="30" step="1" value="0" 
                            class="pm-input" id="heightInput" aria-label="Height shrinkage percentage">
-                    <button class="pm-button" onclick="adjustControl('height', 1)" 
-                            aria-label="Increase height shrinkage" id="heightIncreaseBtn">+</button>
+                    <button class="pm-button" 
+                            onmousedown="startContinuousAdjust('height', 1, this)" 
+                            onmouseup="stopContinuousAdjust('height')"
+                            onmouseleave="stopContinuousAdjust('height')"
+                            ontouchstart="startContinuousAdjust('height', 1, this)" 
+                            ontouchend="stopContinuousAdjust('height')"
+                            aria-label="Increase height shrinkage" 
+                            id="heightIncreaseBtn">+</button>
                 </div>
             </div>
             
             <div class="action-buttons">
                 <button class="action-btn reset-btn" onclick="resetAllControls()" id="resetBtn">RESET ALL</button>
-                <button class="action-btn action-btn print-btn" onclick="printPattern()" id="printBtn">PRINT</button>
                 <button class="action-btn apply-btn" onclick="applyShrinkage()" id="applyBtn">APPLY CHANGES</button>
             </div>
         </div>
@@ -745,6 +765,22 @@
         let isDragging = false;
         let currentSliderValue = 0;
         
+        // Continuous adjustment state
+        let continuousAdjustTimers = {
+            width: null,
+            height: null,
+            overall: null
+        };
+        let continuousAdjustButtons = {
+            width: { plus: null, minus: null },
+            height: { plus: null, minus: null }
+        };
+        let continuousAdjustSpeeds = {
+            width: 1,
+            height: 1,
+            overall: 1
+        };
+        
         // DOM Elements
         const elements = {
             modal: document.getElementById('shrinkageModal'),
@@ -753,7 +789,6 @@
             widthValue: document.getElementById('widthValue'),
             heightInput: document.getElementById('heightInput'),
             heightValue: document.getElementById('heightValue'),
-            sliderFill: document.getElementById('sliderFill'),
             scaledPreview: document.getElementById('scaledPreview'),
             originalOutline: document.getElementById('originalOutline'),
             scaleIndicator: document.getElementById('scaleIndicator'),
@@ -765,7 +800,10 @@
             openModalBtn: document.getElementById('openModalBtn'),
             resetBtn: document.getElementById('resetBtn'),
             applyBtn: document.getElementById('applyBtn'),
-            printBtn: document.getElementById('printBtn')
+            widthDecreaseBtn: document.getElementById('widthDecreaseBtn'),
+            widthIncreaseBtn: document.getElementById('widthIncreaseBtn'),
+            heightDecreaseBtn: document.getElementById('heightDecreaseBtn'),
+            heightIncreaseBtn: document.getElementById('heightIncreaseBtn')
         };
         
         // CORRECTED: Calculate Scale Factor
@@ -773,26 +811,30 @@
             return 1 - (percent / 100);
         }
         
-        // UPDATED: Update slider thumb position with red/green colors
+        // FIXED: Update slider thumb position with red/green colors
         function updateSliderThumb(value) {
-            // Convert value from -30 to 30 to 0-100%
-            const percentage = ((parseFloat(value) + 30) / 60) * 100;
+            // Convert value from -30 to 30 to 0-100% with clamping
+            const clampedValue = Math.max(-30, Math.min(30, value));
+            const percentage = ((clampedValue + 30) / 60) * 100;
+            
+            // FIX 1: Clamp thumb position to prevent overflow
+            const clampedPercentage = Math.max(0, Math.min(100, percentage));
             
             // Update thumb position
-            elements.overallSliderThumb.style.left = percentage + '%';
+            elements.overallSliderThumb.style.left = clampedPercentage + '%';
             
             // Update value display
-            elements.overallSliderValue.textContent = value + '%';
+            elements.overallSliderValue.textContent = clampedValue + '%';
             
-            // Update thumb color and value display based on value
-            if (value < 0) {
+            // FIX 2: Force background color with proper fallback
+            if (clampedValue < 0) {
                 // RED ZONE - EXPANSION
                 elements.overallSliderThumb.style.borderColor = '#F44336';
                 elements.overallSliderThumb.style.background = '#FFEBEE';
                 elements.overallSliderValue.style.background = '#F44336';
                 elements.overallSliderValue.style.color = 'white';
                 elements.overallValue.style.color = '#F44336';
-            } else if (value > 0) {
+            } else if (clampedValue > 0) {
                 // GREEN ZONE - SHRINKAGE
                 elements.overallSliderThumb.style.borderColor = '#4CAF50';
                 elements.overallSliderThumb.style.background = '#E8F5E9';
@@ -809,20 +851,83 @@
             }
         }
         
-        // IMPROVED: Get value from position
-        function getValueFromPosition(clientX) {
+        // FIXED: Update slider from position with proper clamping and rounding
+        function updateSliderFromPosition(clientX) {
             const track = elements.overallSliderTrack;
             const rect = track.getBoundingClientRect();
             
-            // Calculate position relative to track (0 to 1)
+            // Calculate position relative to track (0 to 1) with clamping
             let position = (clientX - rect.left) / rect.width;
             position = Math.max(0, Math.min(1, position)); // Clamp to 0-1
             
-            // Convert to value (-30 to 30)
-            const value = (position * 60) - 30;
+            // Convert to value (-30 to 30) with rounding and clamping
+            // FIX 4: Proper rounding and clamping to avoid floating point issues
+            const rawValue = (position * 60) - 30;
+            const value = Math.max(-30, Math.min(30, Math.round(rawValue)));
             
-            // Round to nearest integer for better snapping
-            return Math.round(value);
+            // Only update if value changed
+            if (value !== currentSliderValue) {
+                currentSliderValue = value;
+                shrinkageState.overall = value;
+                
+                // Update UI
+                elements.overallValue.textContent = value + '%';
+                updateSliderThumb(value);
+                updatePreview();
+            }
+        }
+        
+        // NEW: Start continuous adjustment for plus/minus buttons
+        function startContinuousAdjust(type, amount, button) {
+            // Stop any existing continuous adjustment for this type
+            stopContinuousAdjust(type);
+            
+            // Mark button as active
+            button.classList.add('active');
+            
+            // Store which button is active
+            if (amount > 0) {
+                continuousAdjustButtons[type].plus = button;
+            } else {
+                continuousAdjustButtons[type].minus = button;
+            }
+            
+            // Do the first adjustment immediately
+            adjustControl(type, amount);
+            
+            // Start a timer for faster repeats after initial delay
+            continuousAdjustTimers[type] = setTimeout(() => {
+                // Speed up the continuous adjustment
+                continuousAdjustSpeeds[type] = 3; // Increase speed
+                
+                // Start continuous adjustment interval
+                continuousAdjustTimers[type] = setInterval(() => {
+                    adjustControl(type, amount * continuousAdjustSpeeds[type]);
+                }, 80); // Adjust every 80ms for smooth continuous change
+            }, 500); // Initial delay of 500ms before speeding up
+        }
+        
+        // NEW: Stop continuous adjustment
+        function stopContinuousAdjust(type) {
+            // Clear timers
+            if (continuousAdjustTimers[type]) {
+                clearTimeout(continuousAdjustTimers[type]);
+                clearInterval(continuousAdjustTimers[type]);
+                continuousAdjustTimers[type] = null;
+            }
+            
+            // Reset speed
+            continuousAdjustSpeeds[type] = 1;
+            
+            // Remove active class from both buttons of this type
+            if (continuousAdjustButtons[type].plus) {
+                continuousAdjustButtons[type].plus.classList.remove('active');
+                continuousAdjustButtons[type].plus = null;
+            }
+            if (continuousAdjustButtons[type].minus) {
+                continuousAdjustButtons[type].minus.classList.remove('active');
+                continuousAdjustButtons[type].minus = null;
+            }
         }
         
         // IMPROVED: Handle slider drag start
@@ -834,8 +939,10 @@
             // Add event listeners for move and end
             document.addEventListener('mousemove', handleDrag);
             document.addEventListener('mouseup', stopDrag);
+            
+            // FIX 3: Add passive: false to touch events for proper mobile handling
             document.addEventListener('touchmove', handleDrag, { passive: false });
-            document.addEventListener('touchend', stopDrag);
+            document.addEventListener('touchend', stopDrag, { passive: false });
             
             // Handle initial click/touch position
             const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
@@ -871,22 +978,6 @@
             }, 200);
         }
         
-        // IMPROVED: Update slider from position
-        function updateSliderFromPosition(clientX) {
-            const value = getValueFromPosition(clientX);
-            
-            // Only update if value changed
-            if (value !== currentSliderValue) {
-                currentSliderValue = value;
-                shrinkageState.overall = value;
-                
-                // Update UI
-                elements.overallValue.textContent = value + '%';
-                updateSliderThumb(value);
-                updatePreview();
-            }
-        }
-        
         // IMPROVED: Handle track click
         function handleTrackClick(e) {
             const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
@@ -915,15 +1006,15 @@
         // Close Modal
         function closeShrinkageModal() {
             elements.modal.style.display = 'none';
+            // Stop any ongoing continuous adjustments when modal closes
+            stopContinuousAdjust('width');
+            stopContinuousAdjust('height');
         }
         
-        // Adjust Control
+        // Adjust Control (updated for continuous adjustment support)
         function adjustControl(type, amount) {
             const input = elements[type + 'Input'];
             const valueSpan = elements[type + 'Value'];
-            const button = amount > 0 ? 
-                document.getElementById(type + 'IncreaseBtn') : 
-                document.getElementById(type + 'DecreaseBtn');
             
             let current = parseInt(input.value) || 0;
             let newValue = current + amount;
@@ -945,14 +1036,6 @@
             }
             
             shrinkageState[type] = newValue;
-            
-            // Add click feedback to button
-            if (button) {
-                button.classList.add('click-feedback');
-                setTimeout(() => {
-                    button.classList.remove('click-feedback');
-                }, 200);
-            }
             
             // Update preview
             updatePreview();
@@ -996,7 +1079,7 @@
             }
         }
         
-        // Update Preview
+        // FIXED: Update Preview with proper highlight removal
         function updatePreview() {
             // Get current values
             const overall = currentSliderValue;
@@ -1048,25 +1131,12 @@
             const newHeight = Math.round(baseHeight * scaleY);
             elements.currentSize.textContent = `${newWidth} × ${newHeight}`;
             
-            // Highlight demo pattern if changes are pending
+            // FIX 5: Ensure highlight is properly removed when no changes
             if (overall !== 0 || width !== 0 || height !== 0) {
                 elements.demoPattern.classList.add('shrinkage-active');
             } else {
                 elements.demoPattern.classList.remove('shrinkage-active');
             }
-        }
-
-        // Print Pattern Function
-        function printPattern() {
-            // Add click feedback
-            if(elements.printBtn) {
-                elements.printBtn.classList.add('click-feedback');
-                setTimeout(() => {
-                    elements.printBtn.classList.remove('click-feedback');
-                }, 200);
-            }
-            // Trigger native print - styles are handled in @media print
-            window.print();
         }
         
         // Apply Shrinkage
@@ -1147,6 +1217,10 @@
         
         // Reset All Controls
         function resetAllControls() {
+            // Stop any continuous adjustments
+            stopContinuousAdjust('width');
+            stopContinuousAdjust('height');
+            
             // Reset inputs
             elements.widthInput.value = 0;
             elements.heightInput.value = 0;
@@ -1307,6 +1381,18 @@
             elements.overallSliderThumb.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
             });
+            
+            // Ensure continuous adjustment stops when mouse leaves window
+            window.addEventListener('mouseup', function() {
+                stopContinuousAdjust('width');
+                stopContinuousAdjust('height');
+            });
+            
+            // Ensure continuous adjustment stops when touch ends anywhere
+            window.addEventListener('touchend', function() {
+                stopContinuousAdjust('width');
+                stopContinuousAdjust('height');
+            });
         }
         
         // Initialize
@@ -1329,7 +1415,7 @@
             // Initial preview update
             updatePreview();
             
-            console.log('Shrinkage module initialized with red/green slider design');
+            console.log('Shrinkage module initialized with press-and-hold functionality');
         }
         
         // Start when page loads
@@ -1340,7 +1426,8 @@
         window.closeShrinkageModal = closeShrinkageModal;
         window.applyShrinkage = applyShrinkage;
         window.resetAllControls = resetAllControls;
-        window.printPattern = printPattern;
+        window.startContinuousAdjust = startContinuousAdjust;
+        window.stopContinuousAdjust = stopContinuousAdjust;
     </script>
 </body>
 </html>
