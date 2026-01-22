@@ -111,11 +111,11 @@
             text-align: right;
         }
         
-        /* IMPROVED SLIDER STYLING - MUCH EASIER TO USE */
+        /* UPDATED SLIDER STYLING - RED/GREEN ONLY FOR CLARITY */
         .slider-container {
             position: relative;
             margin-bottom: 5px;
-            height: 44px; /* Increased height for better touch area */
+            height: 44px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -123,22 +123,37 @@
         
         .slider-track {
             width: 100%;
-            height: 12px; /* Thicker track for better visibility */
-            background: linear-gradient(to right, #4CAF50, #FF9800 50%, #F44336);
+            height: 12px;
+            /* RED on left (expansion), GREEN on right (shrinkage) */
+            background: linear-gradient(to right, #F44336, #F44336 50%, #4CAF50 50%, #4CAF50);
             border-radius: 6px;
             position: relative;
             overflow: visible;
             cursor: pointer;
-            touch-action: none; /* Prevent browser touch actions */
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* Center marker at 0% */
+        .slider-track::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #333;
+            transform: translateX(-50%);
+            z-index: 1;
         }
         
         .slider-thumb {
             position: absolute;
-            width: 28px; /* Larger thumb for easier interaction */
+            width: 28px;
             height: 28px;
             background: white;
-            border: 3px solid #1976d2;
+            border: 3px solid #333;
             border-radius: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
@@ -155,7 +170,6 @@
             cursor: grabbing;
             transform: translate(-50%, -50%) scale(1.1);
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            border-color: #0d47a1;
         }
         
         .slider-thumb:hover {
@@ -163,14 +177,7 @@
         }
         
         .slider-fill {
-            position: absolute;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: width 0.15s ease;
-            pointer-events: none;
+            display: none; /* Not used in red/green design */
         }
         
         .slider-ticks {
@@ -199,6 +206,13 @@
             background: rgba(0,0,0,0.2);
         }
         
+        /* Make center tick more prominent */
+        .slider-tick:nth-child(3)::before {
+            background: #333;
+            width: 2px;
+            height: 10px;
+        }
+        
         .slider-tick:first-child,
         .slider-tick:last-child {
             flex: 0 0 auto;
@@ -219,7 +233,7 @@
             top: -30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1976d2;
+            background: #666;
             color: white;
             padding: 4px 8px;
             border-radius: 4px;
@@ -242,7 +256,7 @@
             height: 0;
             border-left: 5px solid transparent;
             border-right: 5px solid transparent;
-            border-top: 5px solid #1976d2;
+            border-top: 5px solid #666;
         }
         
         .slider-thumb:hover .slider-value-display,
@@ -258,12 +272,12 @@
         }
         
         .pm-button {
-            width: 36px; /* Larger for touch */
+            width: 36px;
             height: 36px;
             border: 2px solid #ddd;
             background: white;
-            border-radius: 6px; /* More rounded for modern look */
-            font-size: 20px; /* Larger font */
+            border-radius: 6px;
+            font-size: 20px;
             font-weight: bold;
             color: #333;
             cursor: pointer;
@@ -292,7 +306,7 @@
             border: 2px solid #ddd;
             border-radius: 6px;
             text-align: center;
-            font-size: 16px; /* Larger font */
+            font-size: 16px;
             font-weight: bold;
             color: #333;
             min-height: 36px;
@@ -313,7 +327,7 @@
         
         .action-btn {
             flex: 1;
-            padding: 14px; /* Larger padding for touch */
+            padding: 14px;
             border: none;
             border-radius: 6px;
             font-size: 14px;
@@ -367,22 +381,10 @@
         .shrinkage-indicator {
             display: inline-block;
             padding: 4px 8px;
-            background: #e8f5e9;
-            color: #2e7d32;
             border-radius: 12px;
             font-size: 12px;
             font-weight: bold;
             margin-left: 5px;
-        }
-        
-        .shrinkage-indicator.negative {
-            background: #ffebee;
-            color: #c62828;
-        }
-        
-        .shrinkage-indicator.expansion {
-            background: #e3f2fd;
-            color: #1565c0;
         }
         
         /* Active Piece Styling */
@@ -401,7 +403,7 @@
             font-size: 24px;
             color: #666;
             cursor: pointer;
-            width: 36px; /* Larger for touch */
+            width: 36px;
             height: 36px;
             display: flex;
             align-items: center;
@@ -492,7 +494,7 @@
         }
         
         .info-tooltip:hover::after {
-            content: "Positive = Shrink | Negative = Expand";
+            content: "Red = Expand | Green = Shrink";
             position: absolute;
             bottom: 100%;
             left: 50%;
@@ -583,27 +585,24 @@
             }
 
             .preview-box {
-                background: none !important; /* Save ink */
+                background: none !important;
                 border: none !important;
                 margin: 0 !important;
-                /* Ensure container doesn't clip */
                 width: auto !important;
                 height: auto !important;
             }
 
             /* 5. Style the Actual Piece for Cutting (Wireframe) */
             #scaledPreview {
-                /* Preserve width/height from JS calculation */
                 position: relative !important;
-                transform: none !important; /* Remove centering transform, rely on Flexbox */
+                transform: none !important;
                 left: auto !important;
                 top: auto !important;
-                background: none !important; /* No blue fill */
-                border: 2px solid black !important; /* High contrast cut line */
+                background: none !important;
+                border: 2px solid black !important;
                 box-shadow: none !important;
             }
 
-            /* Optional: Add a text label via pseudo-element to show it's the shrunk piece */
             #scaledPreview::after {
                 content: 'Modified Pattern Piece';
                 display: block;
@@ -643,7 +642,7 @@
         
         <div class="shrinkage-header">
             <h2 class="shrinkage-title" id="shrinkageTitle">PATTERN SHRINKAGE</h2>
-            <p class="shrinkage-subtitle">Drag slider or tap to adjust</p>
+            <p class="shrinkage-subtitle">Red = Expand | Green = Shrink</p>
         </div>
         
         <div class="shrinkage-preview">
@@ -665,13 +664,12 @@
             <div class="control-group">
                 <div class="control-header">
                     <span class="control-label">OVERALL SHRINKAGE 
-                        <span class="info-tooltip" title="Positive = Shrink, Negative = Expand">i</span>
+                        <span class="info-tooltip" title="Red = Expand, Green = Shrink">i</span>
                     </span>
                     <span class="control-value" id="overallValue">0%</span>
                 </div>
                 <div class="slider-container" id="overallSliderContainer">
                     <div class="slider-track" id="overallSliderTrack">
-                        <div class="slider-fill" id="sliderFill"></div>
                         <div class="slider-thumb" id="overallSliderThumb">
                             <div class="slider-value-display" id="overallSliderValue">0%</div>
                         </div>
@@ -725,7 +723,7 @@
     </div>
 
     <script>
-        // ========== IMPROVED SHRINKAGE MODAL WITH BETTER SLIDER ==========
+        // ========== IMPROVED SHRINKAGE MODAL WITH RED/GREEN SLIDER ==========
         
         // State
         let shrinkageState = {
@@ -775,7 +773,7 @@
             return 1 - (percent / 100);
         }
         
-        // IMPROVED: Update slider thumb position
+        // UPDATED: Update slider thumb position with red/green colors
         function updateSliderThumb(value) {
             // Convert value from -30 to 30 to 0-100%
             const percentage = ((parseFloat(value) + 30) / 60) * 100;
@@ -783,22 +781,31 @@
             // Update thumb position
             elements.overallSliderThumb.style.left = percentage + '%';
             
-            // Update fill width
-            elements.sliderFill.style.width = percentage + '%';
-            
             // Update value display
             elements.overallSliderValue.textContent = value + '%';
             
-            // Update color based on value
+            // Update thumb color and value display based on value
             if (value < 0) {
-                elements.sliderFill.style.background = '#F44336'; // Red for expansion
+                // RED ZONE - EXPANSION
                 elements.overallSliderThumb.style.borderColor = '#F44336';
+                elements.overallSliderThumb.style.background = '#FFEBEE';
+                elements.overallSliderValue.style.background = '#F44336';
+                elements.overallSliderValue.style.color = 'white';
+                elements.overallValue.style.color = '#F44336';
             } else if (value > 0) {
-                elements.sliderFill.style.background = '#4CAF50'; // Green for shrinkage
+                // GREEN ZONE - SHRINKAGE
                 elements.overallSliderThumb.style.borderColor = '#4CAF50';
+                elements.overallSliderThumb.style.background = '#E8F5E9';
+                elements.overallSliderValue.style.background = '#4CAF50';
+                elements.overallSliderValue.style.color = 'white';
+                elements.overallValue.style.color = '#4CAF50';
             } else {
-                elements.sliderFill.style.background = '#FF9800'; // Orange for neutral
-                elements.overallSliderThumb.style.borderColor = '#1976d2';
+                // ZERO POINT - NEUTRAL
+                elements.overallSliderThumb.style.borderColor = '#333';
+                elements.overallSliderThumb.style.background = 'white';
+                elements.overallSliderValue.style.background = '#666';
+                elements.overallSliderValue.style.color = 'white';
+                elements.overallValue.style.color = '#1976d2';
             }
         }
         
@@ -927,6 +934,16 @@
             // Update UI
             input.value = newValue;
             valueSpan.textContent = newValue;
+            
+            // Color code the value display
+            if (newValue < 0) {
+                valueSpan.style.color = '#F44336'; // Red for expansion
+            } else if (newValue > 0) {
+                valueSpan.style.color = '#4CAF50'; // Green for shrinkage
+            } else {
+                valueSpan.style.color = '#1976d2'; // Blue for neutral
+            }
+            
             shrinkageState[type] = newValue;
             
             // Add click feedback to button
@@ -960,6 +977,23 @@
             
             // Update slider thumb
             updateSliderThumb(0);
+            
+            // Color code the value displays
+            if (widthPercent < 0) {
+                elements.widthValue.style.color = '#F44336';
+            } else if (widthPercent > 0) {
+                elements.widthValue.style.color = '#4CAF50';
+            } else {
+                elements.widthValue.style.color = '#1976d2';
+            }
+            
+            if (heightPercent < 0) {
+                elements.heightValue.style.color = '#F44336';
+            } else if (heightPercent > 0) {
+                elements.heightValue.style.color = '#4CAF50';
+            } else {
+                elements.heightValue.style.color = '#1976d2';
+            }
         }
         
         // Update Preview
@@ -990,23 +1024,24 @@
             const heightChange = (scaleY - 1) * 100;
             const avgChange = (widthChange + heightChange) / 2;
             
-            // Update scale indicator
+            // Update scale indicator with appropriate colors
             let changeText = '';
-            let indicatorClass = '';
             
             if (avgChange < 0) {
                 changeText = `Shrink: ${Math.abs(avgChange).toFixed(1)}%`;
-                indicatorClass = 'shrinkage-indicator negative';
+                elements.scaleIndicator.style.background = '#E8F5E9'; // Green background
+                elements.scaleIndicator.style.color = '#2E7D32'; // Green text
             } else if (avgChange > 0) {
                 changeText = `Expand: ${avgChange.toFixed(1)}%`;
-                indicatorClass = 'shrinkage-indicator expansion';
+                elements.scaleIndicator.style.background = '#FFEBEE'; // Red background
+                elements.scaleIndicator.style.color = '#C62828'; // Red text
             } else {
                 changeText = '0%';
-                indicatorClass = 'shrinkage-indicator';
+                elements.scaleIndicator.style.background = '#F5F5F5'; // Neutral background
+                elements.scaleIndicator.style.color = '#666'; // Neutral text
             }
             
             elements.scaleIndicator.textContent = changeText;
-            elements.scaleIndicator.className = indicatorClass;
             
             // Update current size display
             const newWidth = Math.round(baseWidth * scaleX);
@@ -1078,29 +1113,29 @@
                 elements.applyBtn.classList.remove('click-feedback');
             }, 200);
             
-            // Show success message
+            // Show success message with clear color coding
             setTimeout(() => {
                 const widthChange = (scaleX - 1) * 100;
                 const heightChange = (scaleY - 1) * 100;
                 
-                let message = `Shrinkage applied!\n\n`;
-                message += `Original: ${originalDimensions.width} × ${originalDimensions.height}\n`;
-                message += `New Size: ${newWidth} × ${newHeight}\n\n`;
+                let message = `✅ Shrinkage applied!\n\n`;
+                message += `📏 Original: ${originalDimensions.width} × ${originalDimensions.height}\n`;
+                message += `📐 New Size: ${newWidth} × ${newHeight}\n\n`;
                 
                 if (widthChange < 0) {
-                    message += `Width: ${Math.abs(widthChange).toFixed(1)}% shrinkage\n`;
+                    message += `↔️ Width: ${Math.abs(widthChange).toFixed(1)}% shrinkage (Green zone)\n`;
                 } else if (widthChange > 0) {
-                    message += `Width: ${widthChange.toFixed(1)}% expansion\n`;
+                    message += `↔️ Width: ${widthChange.toFixed(1)}% expansion (Red zone)\n`;
                 } else {
-                    message += `Width: No change\n`;
+                    message += `↔️ Width: No change\n`;
                 }
                 
                 if (heightChange < 0) {
-                    message += `Height: ${Math.abs(heightChange).toFixed(1)}% shrinkage\n`;
+                    message += `↕️ Height: ${Math.abs(heightChange).toFixed(1)}% shrinkage (Green zone)\n`;
                 } else if (heightChange > 0) {
-                    message += `Height: ${heightChange.toFixed(1)}% expansion\n`;
+                    message += `↕️ Height: ${heightChange.toFixed(1)}% expansion (Red zone)\n`;
                 } else {
-                    message += `Height: No change\n`;
+                    message += `↕️ Height: No change\n`;
                 }
                 
                 alert(message);
@@ -1120,6 +1155,11 @@
             elements.overallValue.textContent = '0%';
             elements.widthValue.textContent = '0';
             elements.heightValue.textContent = '0';
+            
+            // Reset colors
+            elements.overallValue.style.color = '#1976d2';
+            elements.widthValue.style.color = '#1976d2';
+            elements.heightValue.style.color = '#1976d2';
             
             // Reset state
             currentSliderValue = 0;
@@ -1162,7 +1202,7 @@
             elements.overallSliderTrack.addEventListener('click', handleTrackClick);
             elements.overallSliderTrack.addEventListener('touchstart', handleTrackClick, { passive: false });
             
-            // Input fields with validation
+            // Input fields with validation and color coding
             ['width', 'height'].forEach(type => {
                 const input = elements[type + 'Input'];
                 const valueSpan = elements[type + 'Value'];
@@ -1177,6 +1217,15 @@
                     } else {
                         this.style.borderColor = '';
                         this.style.boxShadow = '';
+                        
+                        // Color code based on value
+                        if (value < 0) {
+                            valueSpan.style.color = '#F44336';
+                        } else if (value > 0) {
+                            valueSpan.style.color = '#4CAF50';
+                        } else {
+                            valueSpan.style.color = '#1976d2';
+                        }
                     }
                     
                     value = Math.max(-30, Math.min(30, value));
@@ -1191,9 +1240,26 @@
                     value = Math.max(-30, Math.min(30, value));
                     this.value = value;
                     valueSpan.textContent = value;
+                    
+                    // Color code based on value
+                    if (value < 0) {
+                        valueSpan.style.color = '#F44336';
+                    } else if (value > 0) {
+                        valueSpan.style.color = '#4CAF50';
+                    } else {
+                        valueSpan.style.color = '#1976d2';
+                    }
+                    
                     shrinkageState[type] = value;
                     updatePreview();
                 });
+                
+                // Initial color coding
+                if (parseInt(input.value) < 0) {
+                    valueSpan.style.color = '#F44336';
+                } else if (parseInt(input.value) > 0) {
+                    valueSpan.style.color = '#4CAF50';
+                }
             });
             
             // Keyboard shortcuts
@@ -1263,7 +1329,7 @@
             // Initial preview update
             updatePreview();
             
-            console.log('Improved shrinkage module initialized with better slider functionality');
+            console.log('Shrinkage module initialized with red/green slider design');
         }
         
         // Start when page loads
