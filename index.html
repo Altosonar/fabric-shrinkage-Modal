@@ -14,32 +14,11 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             overflow: hidden;
             margin: 20px auto;
+            position: relative;
         }
         
-        /* Modal Header */
-        .shrinkage-header {
-            background: #f8f9fa;
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-            text-align: center;
-        }
-        
-        .shrinkage-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin: 0;
-        }
-        
-        .shrinkage-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin: 5px 0 0 0;
-        }
-        
-        /* Preview Area */
         .shrinkage-preview {
-            padding: 20px;
+            padding: 30px 20px 20px 20px;
             background: #f5f7fa;
             border-bottom: 1px solid #dee2e6;
             text-align: center;
@@ -53,12 +32,10 @@
                         linear-gradient(45deg, transparent 75%, #e3f2fd 75%),
                         linear-gradient(-45deg, transparent 75%, #e3f2fd 75%);
             background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
             margin: 0 auto 15px auto;
             position: relative;
             border: 2px solid #1976d2;
             border-radius: 4px;
-            transition: all 0.3s ease;
         }
         
         .original-outline {
@@ -68,7 +45,6 @@
             transform: translate(-50%, -50%);
             border: 2px dashed rgba(0,0,0,0.2);
             pointer-events: none;
-            transition: all 0.3s ease;
         }
         
         .preview-label {
@@ -77,18 +53,10 @@
             text-align: center;
         }
         
-        .preview-label strong {
-            color: #333;
-        }
+        .preview-label strong { color: #333; }
         
-        /* Control Groups */
-        .shrinkage-controls {
-            padding: 20px;
-        }
-        
-        .control-group {
-            margin-bottom: 20px;
-        }
+        .shrinkage-controls { padding: 20px; }
+        .control-group { margin-bottom: 20px; }
         
         .control-header {
             display: flex;
@@ -111,7 +79,7 @@
             text-align: right;
         }
         
-        /* UPDATED SLIDER STYLING - RED/GREEN ONLY FOR CLARITY */
+        /* SLIDER STYLING */
         .slider-container {
             position: relative;
             margin-bottom: 5px;
@@ -124,18 +92,14 @@
         .slider-track {
             width: 100%;
             height: 12px;
-            /* RED on left (expansion), GREEN on right (shrinkage) */
             background: linear-gradient(to right, #F44336, #F44336 50%, #4CAF50 50%, #4CAF50);
             border-radius: 6px;
             position: relative;
-            overflow: visible;
-            cursor: pointer;
-            touch-action: none;
-            -webkit-tap-highlight-color: transparent;
             border: 1px solid #e0e0e0;
+            cursor: pointer;
+            overflow: visible;
         }
         
-        /* Center marker at 0% */
         .slider-track::before {
             content: '';
             position: absolute;
@@ -160,77 +124,19 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             cursor: grab;
             z-index: 10;
-            transition: all 0.1s ease;
             user-select: none;
-            -webkit-user-select: none;
+            transition: all 0.1s ease;
         }
         
         .slider-thumb:active,
         .slider-thumb.dragging {
             cursor: grabbing;
             transform: translate(-50%, -50%) scale(1.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        }
-        
-        .slider-thumb:hover {
-            background: #f8f9fa;
-        }
-        
-        .slider-fill {
-            display: none; /* Not used in red/green design */
-        }
-        
-        .slider-ticks {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding: 0 2px;
-        }
-        
-        .slider-tick {
-            font-size: 11px;
-            color: #666;
-            position: relative;
-            text-align: center;
-            flex: 1;
-        }
-        
-        .slider-tick::before {
-            content: '';
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 1px;
-            height: 8px;
-            background: rgba(0,0,0,0.2);
-        }
-        
-        /* Make center tick more prominent */
-        .slider-tick:nth-child(3)::before {
-            background: #333;
-            width: 2px;
-            height: 10px;
-        }
-        
-        .slider-tick:first-child,
-        .slider-tick:last-child {
-            flex: 0 0 auto;
-        }
-        
-        .slider-tick:first-child {
-            text-align: left;
-            margin-left: -2px;
-        }
-        
-        .slider-tick:last-child {
-            text-align: right;
-            margin-right: -2px;
         }
         
         .slider-value-display {
             position: absolute;
-            top: -30px;
+            top: -35px;
             left: 50%;
             transform: translateX(-50%);
             background: #666;
@@ -264,6 +170,50 @@
             opacity: 1;
         }
         
+        .slider-ticks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        
+        .slider-tick {
+            font-size: 11px;
+            color: #666;
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .slider-tick::before {
+            content: '';
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 8px;
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .slider-tick:nth-child(3)::before {
+            background: #333;
+            width: 2px;
+            height: 10px;
+        }
+        
+        .slider-tick:first-child,
+        .slider-tick:last-child {
+            flex: 0 0 auto;
+        }
+        
+        .slider-tick:first-child {
+            text-align: left;
+        }
+        
+        .slider-tick:last-child {
+            text-align: right;
+        }
+
         /* Plus/Minus Controls */
         .pm-controls {
             display: flex;
@@ -272,22 +222,22 @@
         }
         
         .pm-button {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border: 2px solid #ddd;
             background: white;
             border-radius: 6px;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #333;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
-            -webkit-tap-highlight-color: transparent;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
+            transition: all 0.15s;
         }
         
         .pm-button:hover {
@@ -295,15 +245,14 @@
             border-color: #999;
         }
         
-        .pm-button:active {
-            transform: scale(0.95);
-            background: #e9ecef;
+        .pm-button:active { 
+            background: #e9ecef; 
+            transform: scale(0.95); 
         }
         
         .pm-button.active {
             background: #e9ecef;
             border-color: #1976d2;
-            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
         }
         
         .pm-input {
@@ -314,21 +263,18 @@
             text-align: center;
             font-size: 16px;
             font-weight: bold;
-            color: #333;
-            min-height: 36px;
+            min-height: 44px;
         }
         
         .pm-input:focus {
             outline: none;
             border-color: #1976d2;
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
         }
         
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
+        .action-buttons { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 25px; 
         }
         
         .action-btn {
@@ -340,61 +286,31 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
         
-        .reset-btn {
-            background: #f5f5f5;
-            color: #666;
-            border: 2px solid #ddd;
+        .reset-btn { 
+            background: #f5f5f5; 
+            color: #666; 
+            border: 2px solid #ddd; 
         }
         
         .reset-btn:hover {
             background: #e0e0e0;
         }
         
-        .reset-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .apply-btn {
-            background: linear-gradient(135deg, #1976d2, #0d47a1);
-            color: white;
+        .apply-btn { 
+            background: linear-gradient(135deg, #1976d2, #0d47a1); 
+            color: white; 
         }
         
         .apply-btn:hover {
             background: linear-gradient(135deg, #1565c0, #0d3b7a);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
         }
-        
-        .apply-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 6px rgba(25, 118, 210, 0.3);
-        }
-        
-        /* Shrinkage Indicator */
-        .shrinkage-indicator {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-        
-        /* Active Piece Styling */
-        .shrinkage-active {
-            box-shadow: 0 0 0 3px #ff9800;
-            border-color: #ff9800 !important;
-        }
-        
-        /* Close Button */
+
         .shrinkage-close {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 5px;
+            right: 5px;
             background: none;
             border: none;
             font-size: 24px;
@@ -408,72 +324,21 @@
             border-radius: 50%;
             transition: all 0.2s;
             z-index: 100;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .shrinkage-close:hover {
             background: rgba(0,0,0,0.1);
         }
         
-        .shrinkage-close:active {
-            background: rgba(0,0,0,0.15);
-            transform: scale(0.95);
-        }
-        
-        /* Demo Styles */
-        .demo-container {
-            max-width: 400px;
-            margin: 50px auto;
-            text-align: center;
-        }
-        
-        .demo-title {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        
-        .pattern-piece-demo {
-            width: 200px;
-            height: 150px;
-            background: linear-gradient(45deg, #e3f2fd 25%, transparent 25%),
-                        linear-gradient(-45deg, #e3f2fd 25%, transparent 25%),
-                        linear-gradient(45deg, transparent 75%, #e3f2fd 75%),
-                        linear-gradient(-45deg, transparent 75%, #e3f2fd 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            margin: 20px auto;
-            border: 2px solid #1976d2;
-            border-radius: 4px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .demo-controls {
-            margin-top: 20px;
-        }
-        
-        .demo-button {
-            padding: 14px 28px;
-            background: linear-gradient(135deg, #1976d2, #0d47a1);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
+        .shrinkage-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
+            margin-left: 5px;
         }
         
-        .demo-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
-        }
-        
-        .demo-button:active {
-            transform: translateY(0);
-        }
-        
-        /* Info Tooltip */
         .info-tooltip {
             display: inline-block;
             width: 18px;
@@ -487,7 +352,6 @@
             margin-left: 5px;
             cursor: help;
             position: relative;
-            user-select: none;
         }
         
         .info-tooltip:hover::after {
@@ -505,7 +369,6 @@
             z-index: 100;
         }
         
-        /* Click animation for visual feedback */
         @keyframes clickFeedback {
             0% { transform: scale(1); }
             50% { transform: scale(0.95); }
@@ -515,140 +378,19 @@
         .click-feedback {
             animation: clickFeedback 0.2s ease;
         }
-        
-        /* Touch device optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .pm-button, .action-btn, .demo-button {
-                min-height: 44px;
-            }
-            
-            .slider-thumb {
-                width: 32px;
-                height: 32px;
-            }
-            
-            .slider-track {
-                height: 14px;
-            }
-            
-            .shrinkage-close {
-                width: 44px;
-                height: 44px;
-            }
-        }
-
-        /* ========== PRINT READY STYLES ========== */
-        @media print {
-            /* 1. Reset all visibility */
-            body > * {
-                display: none !important;
-            }
-            
-            /* 2. Show only the Modal wrapper (but strip its styling) */
-            .shrinkage-container {
-                display: block !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                background: white !important;
-                border-radius: 0 !important;
-                overflow: visible !important;
-            }
-
-            /* 3. Hide Modal UI Controls */
-            .shrinkage-header, 
-            .shrinkage-controls, 
-            .shrinkage-close,
-            .original-outline,
-            .preview-label,
-            .demo-container {
-                display: none !important;
-            }
-
-            /* 4. Setup Preview Area as the main print canvas */
-            .shrinkage-preview {
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
-                height: 100vh !important;
-                width: 100vw !important;
-                padding: 0 !important;
-                border: none !important;
-                background: white !important;
-            }
-
-            .preview-box {
-                background: none !important;
-                border: none !important;
-                margin: 0 !important;
-                width: auto !important;
-                height: auto !important;
-            }
-
-            /* 5. Style the Actual Piece for Cutting (Wireframe) */
-            #scaledPreview {
-                position: relative !important;
-                transform: none !important;
-                left: auto !important;
-                top: auto !important;
-                background: none !important;
-                border: 2px solid black !important;
-                box-shadow: none !important;
-            }
-
-            #scaledPreview::after {
-                content: 'Modified Pattern Piece';
-                display: block;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                color: #000;
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-                white-space: nowrap;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="demo-container">
-        <h1 class="demo-title">Pattern Shrinkage Demo</h1>
-        
-        <div class="pattern-piece-demo" id="demoPatternPiece">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                       text-align: center; color: #333;">
-                <div style="font-size: 14px; font-weight: bold;">Pattern Piece</div>
-                <div style="font-size: 12px; color: #666;" id="currentSize">200 × 150</div>
-            </div>
-        </div>
-        
-        <div class="demo-controls">
-            <button class="demo-button" onclick="openShrinkageModal()" id="openModalBtn">
-                Open Shrinkage Controls
-            </button>
-        </div>
-    </div>
 
-    <div class="shrinkage-container" id="shrinkageModal" style="display: none;" role="dialog" aria-labelledby="shrinkageTitle">
-        <button class="shrinkage-close" onclick="closeShrinkageModal()" aria-label="Close">×</button>
-        
-        <div class="shrinkage-header">
-            <h2 class="shrinkage-title" id="shrinkageTitle">PATTERN SHRINKAGE</h2>
-            <p class="shrinkage-subtitle">Red = Expand | Green = Shrink</p>
-        </div>
+    <div class="shrinkage-container" id="shrinkageModal">
+        <button class="shrinkage-close" onclick="closeModal()">×</button>
         
         <div class="shrinkage-preview">
             <div class="preview-box" id="previewBox">
-                <div class="original-outline" id="originalOutline" 
-                     style="width: 200px; height: 150px;"></div>
+                <div class="original-outline" id="originalOutline" style="width: 200px; height: 150px;"></div>
                 <div id="scaledPreview" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                                               background: rgba(25, 118, 210, 0.7); border: 2px solid #1976d2;
-                                              border-radius: 4px; transition: all 0.15s ease;"></div>
+                                              border-radius: 4px; transition: all 0.1s ease; width: 200px; height: 150px;"></div>
             </div>
             <div class="preview-label">
                 Preview: <span style="text-decoration: line-through; color: #666;">Original</span> 
@@ -661,13 +403,13 @@
             <div class="control-group">
                 <div class="control-header">
                     <span class="control-label">OVERALL SHRINKAGE 
-                        <span class="info-tooltip" title="Red = Expand, Green = Shrink">i</span>
+                        <span class="info-tooltip">i</span>
                     </span>
                     <span class="control-value" id="overallValue">0%</span>
                 </div>
-                <div class="slider-container" id="overallSliderContainer">
+                <div class="slider-container">
                     <div class="slider-track" id="overallSliderTrack">
-                        <div class="slider-thumb" id="overallSliderThumb">
+                        <div class="slider-thumb" id="overallSliderThumb" style="left: 50%;">
                             <div class="slider-value-display" id="overallSliderValue">0%</div>
                         </div>
                     </div>
@@ -684,26 +426,23 @@
             <div class="control-group">
                 <div class="control-header">
                     <span class="control-label">WIDTH SHRINKAGE %</span>
-                    <span class="control-value" id="widthValue">0</span>
+                    <span class="control-value" id="widthDisplay">0</span>
                 </div>
                 <div class="pm-controls">
                     <button class="pm-button" 
                             onmousedown="startContinuousAdjust('width', -1, this)" 
-                            onmouseup="stopContinuousAdjust('width')"
+                            onmouseup="stopContinuousAdjust('width')" 
                             onmouseleave="stopContinuousAdjust('width')"
                             ontouchstart="startContinuousAdjust('width', -1, this)" 
                             ontouchend="stopContinuousAdjust('width')"
-                            aria-label="Decrease width shrinkage" 
                             id="widthDecreaseBtn">-</button>
-                    <input type="number" min="-30" max="30" step="1" value="0" 
-                           class="pm-input" id="widthInput" aria-label="Width shrinkage percentage">
+                    <input type="number" class="pm-input" id="widthInput" value="0" min="-30" max="30">
                     <button class="pm-button" 
                             onmousedown="startContinuousAdjust('width', 1, this)" 
-                            onmouseup="stopContinuousAdjust('width')"
+                            onmouseup="stopContinuousAdjust('width')" 
                             onmouseleave="stopContinuousAdjust('width')"
                             ontouchstart="startContinuousAdjust('width', 1, this)" 
                             ontouchend="stopContinuousAdjust('width')"
-                            aria-label="Increase width shrinkage" 
                             id="widthIncreaseBtn">+</button>
                 </div>
             </div>
@@ -711,26 +450,23 @@
             <div class="control-group">
                 <div class="control-header">
                     <span class="control-label">HEIGHT SHRINKAGE %</span>
-                    <span class="control-value" id="heightValue">0</span>
+                    <span class="control-value" id="heightDisplay">0</span>
                 </div>
                 <div class="pm-controls">
                     <button class="pm-button" 
                             onmousedown="startContinuousAdjust('height', -1, this)" 
-                            onmouseup="stopContinuousAdjust('height')"
+                            onmouseup="stopContinuousAdjust('height')" 
                             onmouseleave="stopContinuousAdjust('height')"
                             ontouchstart="startContinuousAdjust('height', -1, this)" 
                             ontouchend="stopContinuousAdjust('height')"
-                            aria-label="Decrease height shrinkage" 
                             id="heightDecreaseBtn">-</button>
-                    <input type="number" min="-30" max="30" step="1" value="0" 
-                           class="pm-input" id="heightInput" aria-label="Height shrinkage percentage">
+                    <input type="number" class="pm-input" id="heightInput" value="0" min="-30" max="30">
                     <button class="pm-button" 
                             onmousedown="startContinuousAdjust('height', 1, this)" 
-                            onmouseup="stopContinuousAdjust('height')"
+                            onmouseup="stopContinuousAdjust('height')" 
                             onmouseleave="stopContinuousAdjust('height')"
                             ontouchstart="startContinuousAdjust('height', 1, this)" 
                             ontouchend="stopContinuousAdjust('height')"
-                            aria-label="Increase height shrinkage" 
                             id="heightIncreaseBtn">+</button>
                 </div>
             </div>
@@ -743,7 +479,7 @@
     </div>
 
     <script>
-        // ========== IMPROVED SHRINKAGE MODAL WITH RED/GREEN SLIDER ==========
+        // ========== SHRINKAGE FUNCTIONALITY ==========
         
         // State
         let shrinkageState = {
@@ -752,52 +488,48 @@
             height: 0
         };
         
-        // Store original dimensions
+        // Original dimensions
         const originalDimensions = {
             width: 200,
             height: 150
         };
         
-        // Current applied transform
+        // Current transform
         let currentTransform = { scaleX: 1, scaleY: 1 };
         
-        // Slider dragging state
+        // Slider state
         let isDragging = false;
         let currentSliderValue = 0;
         
-        // Continuous adjustment state
+        // Continuous adjustment
         let continuousAdjustTimers = {
             width: null,
-            height: null,
-            overall: null
+            height: null
         };
+        
         let continuousAdjustButtons = {
             width: { plus: null, minus: null },
             height: { plus: null, minus: null }
         };
+        
         let continuousAdjustSpeeds = {
             width: 1,
-            height: 1,
-            overall: 1
+            height: 1
         };
         
         // DOM Elements
         const elements = {
-            modal: document.getElementById('shrinkageModal'),
             overallValue: document.getElementById('overallValue'),
             widthInput: document.getElementById('widthInput'),
-            widthValue: document.getElementById('widthValue'),
+            widthDisplay: document.getElementById('widthDisplay'),
             heightInput: document.getElementById('heightInput'),
-            heightValue: document.getElementById('heightValue'),
+            heightDisplay: document.getElementById('heightDisplay'),
             scaledPreview: document.getElementById('scaledPreview'),
             originalOutline: document.getElementById('originalOutline'),
             scaleIndicator: document.getElementById('scaleIndicator'),
-            demoPattern: document.getElementById('demoPatternPiece'),
-            currentSize: document.getElementById('currentSize'),
             overallSliderThumb: document.getElementById('overallSliderThumb'),
             overallSliderTrack: document.getElementById('overallSliderTrack'),
             overallSliderValue: document.getElementById('overallSliderValue'),
-            openModalBtn: document.getElementById('openModalBtn'),
             resetBtn: document.getElementById('resetBtn'),
             applyBtn: document.getElementById('applyBtn'),
             widthDecreaseBtn: document.getElementById('widthDecreaseBtn'),
@@ -806,27 +538,22 @@
             heightIncreaseBtn: document.getElementById('heightIncreaseBtn')
         };
         
-        // CORRECTED: Calculate Scale Factor
+        // Calculate scale factor (negative values = expansion, positive = shrinkage)
         function calculateScaleFactor(percent) {
             return 1 - (percent / 100);
         }
         
-        // FIXED: Update slider thumb position with red/green colors
+        // Update slider thumb position and colors
         function updateSliderThumb(value) {
-            // Convert value from -30 to 30 to 0-100% with clamping
             const clampedValue = Math.max(-30, Math.min(30, value));
             const percentage = ((clampedValue + 30) / 60) * 100;
-            
-            // FIX 1: Clamp thumb position to prevent overflow
             const clampedPercentage = Math.max(0, Math.min(100, percentage));
             
-            // Update thumb position
+            // Update position
             elements.overallSliderThumb.style.left = clampedPercentage + '%';
-            
-            // Update value display
             elements.overallSliderValue.textContent = clampedValue + '%';
             
-            // FIX 2: Force background color with proper fallback
+            // Update colors based on value
             if (clampedValue < 0) {
                 // RED ZONE - EXPANSION
                 elements.overallSliderThumb.style.borderColor = '#F44336';
@@ -851,75 +578,59 @@
             }
         }
         
-        // FIXED: Update slider from position with proper clamping and rounding
+        // Update slider from mouse/touch position
         function updateSliderFromPosition(clientX) {
             const track = elements.overallSliderTrack;
             const rect = track.getBoundingClientRect();
             
-            // Calculate position relative to track (0 to 1) with clamping
             let position = (clientX - rect.left) / rect.width;
-            position = Math.max(0, Math.min(1, position)); // Clamp to 0-1
+            position = Math.max(0, Math.min(1, position));
             
-            // Convert to value (-30 to 30) with rounding and clamping
-            // FIX 4: Proper rounding and clamping to avoid floating point issues
             const rawValue = (position * 60) - 30;
             const value = Math.max(-30, Math.min(30, Math.round(rawValue)));
             
-            // Only update if value changed
             if (value !== currentSliderValue) {
                 currentSliderValue = value;
                 shrinkageState.overall = value;
                 
-                // Update UI
                 elements.overallValue.textContent = value + '%';
                 updateSliderThumb(value);
                 updatePreview();
             }
         }
         
-        // NEW: Start continuous adjustment for plus/minus buttons
+        // Start continuous adjustment
         function startContinuousAdjust(type, amount, button) {
-            // Stop any existing continuous adjustment for this type
             stopContinuousAdjust(type);
             
-            // Mark button as active
             button.classList.add('active');
             
-            // Store which button is active
             if (amount > 0) {
                 continuousAdjustButtons[type].plus = button;
             } else {
                 continuousAdjustButtons[type].minus = button;
             }
             
-            // Do the first adjustment immediately
             adjustControl(type, amount);
             
-            // Start a timer for faster repeats after initial delay
             continuousAdjustTimers[type] = setTimeout(() => {
-                // Speed up the continuous adjustment
-                continuousAdjustSpeeds[type] = 3; // Increase speed
-                
-                // Start continuous adjustment interval
+                continuousAdjustSpeeds[type] = 3;
                 continuousAdjustTimers[type] = setInterval(() => {
                     adjustControl(type, amount * continuousAdjustSpeeds[type]);
-                }, 80); // Adjust every 80ms for smooth continuous change
-            }, 500); // Initial delay of 500ms before speeding up
+                }, 80);
+            }, 500);
         }
         
-        // NEW: Stop continuous adjustment
+        // Stop continuous adjustment
         function stopContinuousAdjust(type) {
-            // Clear timers
             if (continuousAdjustTimers[type]) {
                 clearTimeout(continuousAdjustTimers[type]);
                 clearInterval(continuousAdjustTimers[type]);
                 continuousAdjustTimers[type] = null;
             }
             
-            // Reset speed
             continuousAdjustSpeeds[type] = 1;
             
-            // Remove active class from both buttons of this type
             if (continuousAdjustButtons[type].plus) {
                 continuousAdjustButtons[type].plus.classList.remove('active');
                 continuousAdjustButtons[type].plus = null;
@@ -930,26 +641,22 @@
             }
         }
         
-        // IMPROVED: Handle slider drag start
+        // Handle slider drag start
         function startDrag(e) {
             e.preventDefault();
             isDragging = true;
             elements.overallSliderThumb.classList.add('dragging');
             
-            // Add event listeners for move and end
             document.addEventListener('mousemove', handleDrag);
             document.addEventListener('mouseup', stopDrag);
-            
-            // FIX 3: Add passive: false to touch events for proper mobile handling
             document.addEventListener('touchmove', handleDrag, { passive: false });
             document.addEventListener('touchend', stopDrag, { passive: false });
             
-            // Handle initial click/touch position
             const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
             updateSliderFromPosition(clientX);
         }
         
-        // IMPROVED: Handle slider drag
+        // Handle slider dragging
         function handleDrag(e) {
             if (!isDragging) return;
             e.preventDefault();
@@ -958,130 +665,63 @@
             updateSliderFromPosition(clientX);
         }
         
-        // IMPROVED: Stop dragging
+        // Stop dragging
         function stopDrag() {
             if (!isDragging) return;
             
             isDragging = false;
             elements.overallSliderThumb.classList.remove('dragging');
             
-            // Remove event listeners
             document.removeEventListener('mousemove', handleDrag);
             document.removeEventListener('mouseup', stopDrag);
             document.removeEventListener('touchmove', handleDrag);
             document.removeEventListener('touchend', stopDrag);
             
-            // Add click feedback animation
             elements.overallSliderThumb.classList.add('click-feedback');
             setTimeout(() => {
                 elements.overallSliderThumb.classList.remove('click-feedback');
             }, 200);
         }
         
-        // IMPROVED: Handle track click
+        // Handle track click
         function handleTrackClick(e) {
             const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
             updateSliderFromPosition(clientX);
             
-            // Add click feedback
             elements.overallSliderTrack.classList.add('click-feedback');
             setTimeout(() => {
                 elements.overallSliderTrack.classList.remove('click-feedback');
             }, 200);
         }
         
-        // Open Modal
-        function openShrinkageModal() {
-            elements.modal.style.display = 'block';
-            updateInputsFromCurrentTransform();
-            updatePreview();
-            
-            // Add click feedback
-            elements.openModalBtn.classList.add('click-feedback');
-            setTimeout(() => {
-                elements.openModalBtn.classList.remove('click-feedback');
-            }, 200);
-        }
-        
-        // Close Modal
-        function closeShrinkageModal() {
-            elements.modal.style.display = 'none';
-            // Stop any ongoing continuous adjustments when modal closes
-            stopContinuousAdjust('width');
-            stopContinuousAdjust('height');
-        }
-        
-        // Adjust Control (updated for continuous adjustment support)
+        // Adjust control value
         function adjustControl(type, amount) {
             const input = elements[type + 'Input'];
-            const valueSpan = elements[type + 'Value'];
+            const valueSpan = elements[type + 'Display'];
             
             let current = parseInt(input.value) || 0;
             let newValue = current + amount;
             
-            // Clamp between -30 and 30
             newValue = Math.max(-30, Math.min(30, newValue));
             
-            // Update UI
             input.value = newValue;
             valueSpan.textContent = newValue;
             
             // Color code the value display
             if (newValue < 0) {
-                valueSpan.style.color = '#F44336'; // Red for expansion
+                valueSpan.style.color = '#F44336';
             } else if (newValue > 0) {
-                valueSpan.style.color = '#4CAF50'; // Green for shrinkage
+                valueSpan.style.color = '#4CAF50';
             } else {
-                valueSpan.style.color = '#1976d2'; // Blue for neutral
+                valueSpan.style.color = '#1976d2';
             }
             
             shrinkageState[type] = newValue;
-            
-            // Update preview
             updatePreview();
         }
         
-        // Update Inputs from Current Transform
-        function updateInputsFromCurrentTransform() {
-            // Convert current scale back to percentages
-            const widthPercent = Math.round((1 - currentTransform.scaleX) * 100);
-            const heightPercent = Math.round((1 - currentTransform.scaleY) * 100);
-            
-            // Set overall to 0 for simplicity
-            currentSliderValue = 0;
-            shrinkageState.overall = 0;
-            
-            // Update UI
-            elements.overallValue.textContent = '0%';
-            elements.widthInput.value = widthPercent;
-            elements.heightInput.value = heightPercent;
-            elements.widthValue.textContent = widthPercent;
-            elements.heightValue.textContent = heightPercent;
-            
-            // Update slider thumb
-            updateSliderThumb(0);
-            
-            // Color code the value displays
-            if (widthPercent < 0) {
-                elements.widthValue.style.color = '#F44336';
-            } else if (widthPercent > 0) {
-                elements.widthValue.style.color = '#4CAF50';
-            } else {
-                elements.widthValue.style.color = '#1976d2';
-            }
-            
-            if (heightPercent < 0) {
-                elements.heightValue.style.color = '#F44336';
-            } else if (heightPercent > 0) {
-                elements.heightValue.style.color = '#4CAF50';
-            } else {
-                elements.heightValue.style.color = '#1976d2';
-            }
-        }
-        
-        // FIXED: Update Preview with proper highlight removal
+        // Update preview visualization
         function updatePreview() {
-            // Get current values
             const overall = currentSliderValue;
             const width = parseInt(elements.widthInput.value) || 0;
             const height = parseInt(elements.heightInput.value) || 0;
@@ -1091,11 +731,11 @@
             const widthFactor = calculateScaleFactor(width);
             const heightFactor = calculateScaleFactor(height);
             
-            // Combined scale
+            // Combined scale (multiplicative)
             const scaleX = overallFactor * widthFactor;
             const scaleY = overallFactor * heightFactor;
             
-            // Update preview visualization
+            // Update preview box
             const baseWidth = originalDimensions.width;
             const baseHeight = originalDimensions.height;
             
@@ -1107,39 +747,27 @@
             const heightChange = (scaleY - 1) * 100;
             const avgChange = (widthChange + heightChange) / 2;
             
-            // Update scale indicator with appropriate colors
+            // Update scale indicator
             let changeText = '';
             
             if (avgChange < 0) {
                 changeText = `Shrink: ${Math.abs(avgChange).toFixed(1)}%`;
-                elements.scaleIndicator.style.background = '#E8F5E9'; // Green background
-                elements.scaleIndicator.style.color = '#2E7D32'; // Green text
+                elements.scaleIndicator.style.background = '#E8F5E9';
+                elements.scaleIndicator.style.color = '#2E7D32';
             } else if (avgChange > 0) {
                 changeText = `Expand: ${avgChange.toFixed(1)}%`;
-                elements.scaleIndicator.style.background = '#FFEBEE'; // Red background
-                elements.scaleIndicator.style.color = '#C62828'; // Red text
+                elements.scaleIndicator.style.background = '#FFEBEE';
+                elements.scaleIndicator.style.color = '#C62828';
             } else {
                 changeText = '0%';
-                elements.scaleIndicator.style.background = '#F5F5F5'; // Neutral background
-                elements.scaleIndicator.style.color = '#666'; // Neutral text
+                elements.scaleIndicator.style.background = '#F5F5F5';
+                elements.scaleIndicator.style.color = '#666';
             }
             
             elements.scaleIndicator.textContent = changeText;
-            
-            // Update current size display
-            const newWidth = Math.round(baseWidth * scaleX);
-            const newHeight = Math.round(baseHeight * scaleY);
-            elements.currentSize.textContent = `${newWidth} × ${newHeight}`;
-            
-            // FIX 5: Ensure highlight is properly removed when no changes
-            if (overall !== 0 || width !== 0 || height !== 0) {
-                elements.demoPattern.classList.add('shrinkage-active');
-            } else {
-                elements.demoPattern.classList.remove('shrinkage-active');
-            }
         }
         
-        // Apply Shrinkage
+        // Apply shrinkage
         function applyShrinkage() {
             const overall = currentSliderValue;
             const width = parseInt(elements.widthInput.value) || 0;
@@ -1156,26 +784,9 @@
             // Store current transform
             currentTransform = { scaleX, scaleY };
             
-            // Apply to demo pattern
-            elements.demoPattern.style.transform = 'none';
-            requestAnimationFrame(() => {
-                elements.demoPattern.style.transform = `scale(${scaleX}, ${scaleY})`;
-                elements.demoPattern.style.transformOrigin = 'center';
-            });
-            
             // Calculate new dimensions
             const newWidth = Math.round(originalDimensions.width * scaleX);
             const newHeight = Math.round(originalDimensions.height * scaleY);
-            
-            // Update display
-            elements.currentSize.textContent = `${newWidth} × ${newHeight}`;
-            elements.currentSize.style.color = '#2e7d32';
-            elements.currentSize.style.fontWeight = 'bold';
-            
-            // Store data
-            elements.demoPattern.dataset.shrinkageApplied = true;
-            elements.demoPattern.dataset.scaleX = scaleX.toFixed(3);
-            elements.demoPattern.dataset.scaleY = scaleY.toFixed(3);
             
             // Add click feedback
             elements.applyBtn.classList.add('click-feedback');
@@ -1183,7 +794,7 @@
                 elements.applyBtn.classList.remove('click-feedback');
             }, 200);
             
-            // Show success message with clear color coding
+            // Show success message
             setTimeout(() => {
                 const widthChange = (scaleX - 1) * 100;
                 const heightChange = (scaleY - 1) * 100;
@@ -1193,106 +804,87 @@
                 message += `📐 New Size: ${newWidth} × ${newHeight}\n\n`;
                 
                 if (widthChange < 0) {
-                    message += `↔️ Width: ${Math.abs(widthChange).toFixed(1)}% shrinkage (Green zone)\n`;
+                    message += `↔️ Width: ${Math.abs(widthChange).toFixed(1)}% shrinkage\n`;
                 } else if (widthChange > 0) {
-                    message += `↔️ Width: ${widthChange.toFixed(1)}% expansion (Red zone)\n`;
+                    message += `↔️ Width: ${widthChange.toFixed(1)}% expansion\n`;
                 } else {
                     message += `↔️ Width: No change\n`;
                 }
                 
                 if (heightChange < 0) {
-                    message += `↕️ Height: ${Math.abs(heightChange).toFixed(1)}% shrinkage (Green zone)\n`;
+                    message += `↕️ Height: ${Math.abs(heightChange).toFixed(1)}% shrinkage\n`;
                 } else if (heightChange > 0) {
-                    message += `↕️ Height: ${heightChange.toFixed(1)}% expansion (Red zone)\n`;
+                    message += `↕️ Height: ${heightChange.toFixed(1)}% expansion\n`;
                 } else {
                     message += `↕️ Height: No change\n`;
                 }
                 
                 alert(message);
             }, 100);
-            
-            // Close modal
-            setTimeout(closeShrinkageModal, 300);
         }
         
-        // Reset All Controls
+        // Reset all controls
         function resetAllControls() {
-            // Stop any continuous adjustments
             stopContinuousAdjust('width');
             stopContinuousAdjust('height');
             
-            // Reset inputs
             elements.widthInput.value = 0;
             elements.heightInput.value = 0;
             
-            // Reset values display
             elements.overallValue.textContent = '0%';
-            elements.widthValue.textContent = '0';
-            elements.heightValue.textContent = '0';
+            elements.widthDisplay.textContent = '0';
+            elements.heightDisplay.textContent = '0';
             
-            // Reset colors
             elements.overallValue.style.color = '#1976d2';
-            elements.widthValue.style.color = '#1976d2';
-            elements.heightValue.style.color = '#1976d2';
+            elements.widthDisplay.style.color = '#1976d2';
+            elements.heightDisplay.style.color = '#1976d2';
             
-            // Reset state
             currentSliderValue = 0;
             shrinkageState.overall = 0;
             shrinkageState.width = 0;
             shrinkageState.height = 0;
             
-            // Reset slider thumb
             updateSliderThumb(0);
-            
-            // Reset preview
             updatePreview();
             
-            // Reset demo pattern
-            elements.demoPattern.style.transform = 'none';
-            elements.demoPattern.classList.remove('shrinkage-active');
-            elements.currentSize.textContent = '200 × 150';
-            elements.currentSize.style.color = '';
-            elements.currentSize.style.fontWeight = '';
-            
-            // Reset transform tracking
             currentTransform = { scaleX: 1, scaleY: 1 };
             
-            delete elements.demoPattern.dataset.shrinkageApplied;
-            
-            // Add click feedback
             elements.resetBtn.classList.add('click-feedback');
             setTimeout(() => {
                 elements.resetBtn.classList.remove('click-feedback');
             }, 200);
         }
         
-        // Event Listeners
+        // Close modal
+        function closeModal() {
+            document.querySelector('.shrinkage-container').style.display = 'none';
+            stopContinuousAdjust('width');
+            stopContinuousAdjust('height');
+        }
+        
+        // Initialize event listeners
         function setupEventListeners() {
-            // IMPROVED: Slider drag events
+            // Slider drag events
             elements.overallSliderThumb.addEventListener('mousedown', startDrag);
             elements.overallSliderThumb.addEventListener('touchstart', startDrag, { passive: false });
             
-            // IMPROVED: Track click events
+            // Track click events
             elements.overallSliderTrack.addEventListener('click', handleTrackClick);
             elements.overallSliderTrack.addEventListener('touchstart', handleTrackClick, { passive: false });
             
-            // Input fields with validation and color coding
+            // Input fields with validation
             ['width', 'height'].forEach(type => {
                 const input = elements[type + 'Input'];
-                const valueSpan = elements[type + 'Value'];
+                const valueSpan = elements[type + 'Display'];
                 
                 input.addEventListener('input', function() {
                     let value = parseInt(this.value) || 0;
                     
-                    // Validate range
                     if (value < -30 || value > 30) {
                         this.style.borderColor = '#F44336';
-                        this.style.boxShadow = '0 0 0 3px rgba(244, 67, 54, 0.1)';
                     } else {
                         this.style.borderColor = '';
-                        this.style.boxShadow = '';
                         
-                        // Color code based on value
                         if (value < 0) {
                             valueSpan.style.color = '#F44336';
                         } else if (value > 0) {
@@ -1315,7 +907,6 @@
                     this.value = value;
                     valueSpan.textContent = value;
                     
-                    // Color code based on value
                     if (value < 0) {
                         valueSpan.style.color = '#F44336';
                     } else if (value > 0) {
@@ -1338,31 +929,29 @@
             
             // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
-                if (elements.modal.style.display === 'block') {
-                    if (e.key === 'Escape') {
-                        closeShrinkageModal();
+                if (e.key === 'Escape') {
+                    closeModal();
+                    e.preventDefault();
+                }
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    applyShrinkage();
+                    e.preventDefault();
+                }
+                if (e.key === 'r' && e.ctrlKey) {
+                    resetAllControls();
+                    e.preventDefault();
+                }
+                
+                // Arrow key navigation for inputs
+                if (e.target.classList.contains('pm-input')) {
+                    if (e.key === 'ArrowUp') {
+                        const type = e.target.id.replace('Input', '');
+                        adjustControl(type, 1);
                         e.preventDefault();
-                    }
-                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                        applyShrinkage();
+                    } else if (e.key === 'ArrowDown') {
+                        const type = e.target.id.replace('Input', '');
+                        adjustControl(type, -1);
                         e.preventDefault();
-                    }
-                    if (e.key === 'r' && e.ctrlKey) {
-                        resetAllControls();
-                        e.preventDefault();
-                    }
-                    
-                    // Arrow key navigation for inputs
-                    if (e.target.classList.contains('pm-input')) {
-                        if (e.key === 'ArrowUp') {
-                            const type = e.target.id.replace('Input', '');
-                            adjustControl(type, 1);
-                            e.preventDefault();
-                        } else if (e.key === 'ArrowDown') {
-                            const type = e.target.id.replace('Input', '');
-                            adjustControl(type, -1);
-                            e.preventDefault();
-                        }
                     }
                 }
             });
@@ -1377,18 +966,17 @@
                 });
             });
             
-            // Prevent context menu on slider thumb
+            // Prevent context menu on slider
             elements.overallSliderThumb.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
             });
             
-            // Ensure continuous adjustment stops when mouse leaves window
+            // Stop continuous adjustment when mouse leaves window
             window.addEventListener('mouseup', function() {
                 stopContinuousAdjust('width');
                 stopContinuousAdjust('height');
             });
             
-            // Ensure continuous adjustment stops when touch ends anywhere
             window.addEventListener('touchend', function() {
                 stopContinuousAdjust('width');
                 stopContinuousAdjust('height');
@@ -1397,37 +985,28 @@
         
         // Initialize
         function initShrinkageModule() {
-            // Set initial values
             elements.overallValue.textContent = '0%';
-            elements.widthValue.textContent = elements.widthInput.value;
-            elements.heightValue.textContent = elements.heightInput.value;
+            elements.widthDisplay.textContent = elements.widthInput.value;
+            elements.heightDisplay.textContent = elements.heightInput.value;
             
-            // Set original outline to match base dimensions
             elements.originalOutline.style.width = originalDimensions.width + 'px';
             elements.originalOutline.style.height = originalDimensions.height + 'px';
             
-            // Setup event listeners
             setupEventListeners();
-            
-            // Initial slider thumb position
             updateSliderThumb(0);
-            
-            // Initial preview update
             updatePreview();
-            
-            console.log('Shrinkage module initialized with press-and-hold functionality');
         }
         
-        // Start when page loads
+        // Initialize when page loads
         window.addEventListener('DOMContentLoaded', initShrinkageModule);
         
         // Make functions available globally
-        window.openShrinkageModal = openShrinkageModal;
-        window.closeShrinkageModal = closeShrinkageModal;
-        window.applyShrinkage = applyShrinkage;
-        window.resetAllControls = resetAllControls;
         window.startContinuousAdjust = startContinuousAdjust;
         window.stopContinuousAdjust = stopContinuousAdjust;
+        window.adjustControl = adjustControl;
+        window.applyShrinkage = applyShrinkage;
+        window.resetAllControls = resetAllControls;
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>
